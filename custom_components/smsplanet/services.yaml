@@ -1,0 +1,44 @@
+send_sms:
+  target:
+    entity:
+      integration: smsplanet
+      domain: notify
+  fields:
+    message:
+      required: true
+      selector:
+        text:
+          multiline: true
+    target:
+      required: false
+      selector:
+        text:
+    sender:
+      required: false
+      selector:
+        text:
+    clear_polish:
+      required: false
+      selector:
+        boolean:
+    transactional:
+      required: false
+      selector:
+        boolean:
+    test:
+      required: false
+      selector:
+        boolean:
+    name:
+      required: false
+      selector:
+        text:
+
+count_sms_parts:
+  fields:
+    message:
+      required: true
+      selector:
+        text:
+          multiline: true
+

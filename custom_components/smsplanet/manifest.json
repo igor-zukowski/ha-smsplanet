@@ -1,0 +1,13 @@
+{
+  "domain": "smsplanet",
+  "name": "SMSPLANET",
+  "codeowners": ["@igorzukowski"],
+  "config_flow": true,
+  "dependencies": ["http", "webhook"],
+  "documentation": "https://github.com/igorzukowski/smsplanet",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/igorzukowski/smsplanet/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

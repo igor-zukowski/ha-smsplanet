@@ -1,0 +1,56 @@
+{
+  "title": "SMSPLANET",
+  "config": {
+    "step": {
+      "user": {
+        "title": "SMSPLANET",
+        "data": {
+          "api_token": "Token API",
+          "signature_key": "Klucz podpisu webhooka"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ponowna autoryzacja SMSPLANET",
+        "data": {
+          "api_token": "Token API"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można połączyć się z SMSPLANET.",
+      "invalid_auth": "Nieprawidłowe dane autoryzacyjne SMSPLANET.",
+      "unknown": "Nieoczekiwany błąd SMSPLANET."
+    },
+    "abort": {
+      "already_configured": "To konto SMSPLANET jest już skonfigurowane."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje SMSPLANET",
+        "data": {
+          "default_sender": "Domyślny nadawca",
+          "default_recipients": "Domyślni odbiorcy, oddzieleni przecinkami",
+          "clear_polish": "Zastępuj polskie znaki",
+          "transactional": "Używaj kanału transakcyjnego",
+          "test_mode": "Tryb testowy",
+          "enable_delivery_webhook": "Włącz webhook statusów doręczeń"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "balance": {
+        "name": "Saldo"
+      }
+    },
+    "notify": {
+      "sms": {
+        "name": "SMS"
+      }
+    }
+  }
+}
+

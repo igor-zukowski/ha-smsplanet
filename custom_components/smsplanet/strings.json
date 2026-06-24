@@ -1,0 +1,56 @@
+{
+  "title": "SMSPLANET",
+  "config": {
+    "step": {
+      "user": {
+        "title": "SMSPLANET",
+        "data": {
+          "api_token": "API token",
+          "signature_key": "Webhook signature key"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate SMSPLANET",
+        "data": {
+          "api_token": "API token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to SMSPLANET.",
+      "invalid_auth": "Invalid SMSPLANET credentials.",
+      "unknown": "Unexpected SMSPLANET error."
+    },
+    "abort": {
+      "already_configured": "This SMSPLANET account is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SMSPLANET options",
+        "data": {
+          "default_sender": "Default sender",
+          "default_recipients": "Default recipients, comma separated",
+          "clear_polish": "Replace Polish characters",
+          "transactional": "Use transactional channel",
+          "test_mode": "Test mode",
+          "enable_delivery_webhook": "Enable delivery status webhook"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "balance": {
+        "name": "Balance"
+      }
+    },
+    "notify": {
+      "sms": {
+        "name": "SMS"
+      }
+    }
+  }
+}
+
