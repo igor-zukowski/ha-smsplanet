@@ -3,17 +3,25 @@
 from __future__ import annotations
 
 import base64
+import csv
 import hashlib
 import hmac
 import logging
 from collections.abc import Mapping, Sequence
+from io import StringIO
 from typing import Any
 
 from aiohttp import ClientError, ClientResponseError, ClientSession
 from async_timeout import timeout
 
 from .const import API_BASE_URL, API_TIMEOUT, WEBHOOK_TYPE_MESSAGE_NOTIFICATION
-from .models import BalanceResponse, DeliveryNotification, SendSmsResponse
+from .models import (
+    BalanceResponse,
+    DeliveryNotification,
+    SendMmsResponse,
+    SendSmsResponse,
+    ShortUrlInfo,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,6 +99,9 @@ class SmsplanetClient:
         transactional: bool = False,
         test: bool = False,
         name: str | None = None,
+        send_at: str | None = None,
+        company_id: str | None = None,
+        params: Sequence[str] | None = None,
     ) -> SendSmsResponse:
         """Send an SMS message."""
         if not recipients:
@@ -106,12 +117,99 @@ class SmsplanetClient:
         form.extend(("to", recipient) for recipient in recipients)
         if name:
             form.append(("name", name))
+        if send_at:
+            form.append(("date", send_at))
+        if company_id:
+            form.append(("company_id", company_id))
+        if params:
+            if len(params) > 4:
+                raise SmsplanetApiError("SMSPLANET supports at most 4 personalization parameters")
+            for index, value in enumerate(params, start=1):
+                if value:
+                    form.append((f"param{index}", value))
 
         data = await self._request("POST", "/sms", data=form)
         message_id = data.get("messageId")
         if not isinstance(message_id, str) or not message_id:
             raise SmsplanetApiError("Invalid send SMS response")
         return SendSmsResponse(message_id=message_id)
+
+    async def async_send_mms(
+        self,
+        *,
+        sender: str,
+        recipients: Sequence[str],
+        subject: str,
+        message: str,
+        attachment: str,
+        clear_polish: bool = False,
+        test: bool = False,
+        send_at: str | None = None,
+    ) -> SendMmsResponse:
+        """Send an MMS message."""
+        if not recipients:
+            raise SmsplanetApiError("At least one recipient is required")
+
+        form: list[tuple[str, str]] = [
+            ("from", sender),
+            ("subject", subject),
+            ("msg", message),
+            ("attachment", attachment),
+            ("clear_polish", _bool_int(clear_polish)),
+            ("test", _bool_int(test)),
+        ]
+        form.extend(("to", recipient) for recipient in recipients)
+        if send_at:
+            form.append(("date", send_at))
+
+        data = await self._request("POST", "/mms", data=form)
+        message_id = data.get("messageId")
+        if not isinstance(message_id, str) or not message_id:
+            raise SmsplanetApiError("Invalid send MMS response")
+        return SendMmsResponse(message_id=message_id)
+
+    async def async_cancel_message(self, message_id: str) -> None:
+        """Cancel a scheduled SMS/MMS message."""
+        if message_id.startswith("B-"):
+            raise SmsplanetApiError("Buffered message IDs cannot be cancelled")
+        await self._request("POST", "/cancelMessage", data={"messageId": message_id})
+
+    async def async_generate_report(
+        self,
+        *,
+        date_from: str,
+        date_to: str,
+        detailed: bool = False,
+        response_type: str = "json",
+    ) -> dict[str, Any]:
+        """Generate an aggregate report."""
+        data = await self._request(
+            "POST",
+            "/generateReport",
+            data={
+                "from": date_from,
+                "to": date_to,
+                "detailed": str(detailed).lower(),
+                "responseType": response_type,
+            },
+        )
+        return _report_response(data)
+
+    async def async_get_message_info(
+        self,
+        *,
+        message_ids: Sequence[str],
+        response_type: str = "json",
+    ) -> dict[str, Any]:
+        """Fetch detailed message information for one or more message IDs."""
+        if not message_ids:
+            raise SmsplanetApiError("At least one message ID is required")
+        if len(message_ids) > 1000:
+            raise SmsplanetApiError("SMSPLANET supports at most 1000 message IDs per request")
+        form: list[tuple[str, str]] = [("responseType", response_type)]
+        form.extend(("messageId", message_id) for message_id in message_ids)
+        data = await self._request("POST", "/getMessageInfo", data=form)
+        return _report_response(data)
 
     async def async_count_sms_parts(self, content: str) -> int:
         """Return the number of SMS parts for content."""
@@ -129,6 +227,10 @@ class SmsplanetClient:
             data={"url": url, "type": WEBHOOK_TYPE_MESSAGE_NOTIFICATION},
         )
 
+    async def async_create_webhook(self, *, url: str, webhook_type: str) -> None:
+        """Create a SMSPLANET webhook."""
+        await self._request("POST", "/webhooks/create", data={"url": url, "type": webhook_type})
+
     async def async_remove_delivery_webhook(self) -> None:
         """Remove the delivery notification webhook."""
         await self._request(
@@ -137,6 +239,10 @@ class SmsplanetClient:
             data={"type": WEBHOOK_TYPE_MESSAGE_NOTIFICATION},
         )
 
+    async def async_remove_webhook(self, webhook_type: str) -> None:
+        """Remove a SMSPLANET webhook."""
+        await self._request("POST", "/webhooks/remove", data={"type": webhook_type})
+
     async def async_list_webhooks(self) -> list[dict[str, Any]]:
         """List configured SMSPLANET webhooks."""
         data = await self._request("GET", "/webhooks/list")
@@ -144,6 +250,59 @@ class SmsplanetClient:
         if not isinstance(webhooks, list):
             raise SmsplanetApiError("Invalid webhook list response")
         return webhooks
+
+    async def async_add_sender_field(self, sender_field: str) -> None:
+        """Request a new sender field."""
+        await self._request("POST", "/addSenderField", data={"senderField": sender_field})
+
+    async def async_add_to_blacklist(self, *, msisdn: str, valid_to: str | None = None) -> None:
+        """Add a phone number to SMSPLANET blacklist."""
+        data = {"msisdn": msisdn}
+        if valid_to:
+            data["validTo"] = valid_to
+        await self._request("POST", "/blacklist/add", data=data)
+
+    async def async_remove_from_blacklist(self, msisdn: str) -> None:
+        """Remove a phone number from SMSPLANET blacklist."""
+        await self._request("POST", "/blacklist/remove", data={"msisdn": msisdn})
+
+    async def async_create_short_url(
+        self,
+        *,
+        long_url: str,
+        custom_alias: str | None = None,
+        save: bool = False,
+        domain: str = "wejdz.do",
+    ) -> str:
+        """Create a short URL."""
+        form = {
+            "longUrl": long_url,
+            "save": str(save).lower(),
+            "domain": domain,
+        }
+        if custom_alias:
+            form["customAlias"] = custom_alias
+        data = await self._request("POST", "/shortUrl", data=form)
+        short_url = data.get("shortUrl")
+        if not isinstance(short_url, str) or not short_url:
+            raise SmsplanetApiError("Invalid short URL response")
+        return short_url
+
+    async def async_list_short_urls(self, short_url: str | None = None) -> list[ShortUrlInfo]:
+        """List short URLs saved in SMSPLANET."""
+        params = {"shortUrl": short_url} if short_url else None
+        data = await self._request("GET", "/shortener/list", params=params)
+        links = data.get("links", [])
+        if not isinstance(links, list):
+            raise SmsplanetApiError("Invalid short URL list response")
+        return [_parse_short_url_info(link) for link in links if isinstance(link, dict)]
+
+    async def async_remove_short_urls(self, aliases: Sequence[str]) -> None:
+        """Remove one or more short URLs."""
+        if not aliases:
+            raise SmsplanetApiError("At least one short URL alias is required")
+        form = [("alias", alias) for alias in aliases]
+        await self._request("POST", "/shortener/remove", data=form)
 
     async def _request(
         self,
@@ -264,6 +423,34 @@ def parse_delivery_notification(payload: Mapping[str, Any]) -> DeliveryNotificat
         delivery_date=_str_or_none(notification.get("deliveryDate")),
         delivery_error=_str_or_none(notification.get("deliveryError")),
         raw=dict(notification),
+    )
+
+
+def _report_response(data: Mapping[str, Any]) -> dict[str, Any]:
+    message = data.get("message", "")
+    if not isinstance(message, str):
+        raise SmsplanetApiError("Invalid report response")
+    return {"message": message, "rows": _parse_csv_rows(message)}
+
+
+def _parse_csv_rows(value: str) -> list[dict[str, str]]:
+    if not value or ";" not in value:
+        return []
+    try:
+        reader = csv.DictReader(StringIO(value), delimiter=";")
+        return [dict(row) for row in reader if row]
+    except csv.Error:
+        return []
+
+
+def _parse_short_url_info(data: Mapping[str, Any]) -> ShortUrlInfo:
+    short_url = str(data.get("shortURL") or data.get("shortUrl") or "")
+    return ShortUrlInfo(
+        date=_str_or_none(data.get("date")),
+        short_url=short_url,
+        long_url=_str_or_none(data.get("longURL") or data.get("longUrl")),
+        clicks=_int_or_none(data.get("clicks")),
+        raw=dict(data),
     )
 
 

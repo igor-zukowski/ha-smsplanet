@@ -1,0 +1,55 @@
+{
+  "services": {
+    "send_sms": {
+      "service": "mdi:message-text"
+    },
+    "send_mms": {
+      "service": "mdi:message-image"
+    },
+    "count_sms_parts": {
+      "service": "mdi:counter"
+    },
+    "cancel_message": {
+      "service": "mdi:message-off"
+    },
+    "generate_report": {
+      "service": "mdi:file-chart"
+    },
+    "get_message_info": {
+      "service": "mdi:message-processing"
+    },
+    "refresh_delivery_webhook": {
+      "service": "mdi:webhook"
+    },
+    "remove_delivery_webhook": {
+      "service": "mdi:webhook-off"
+    },
+    "list_webhooks": {
+      "service": "mdi:format-list-bulleted"
+    },
+    "get_incoming_sms_webhook_url": {
+      "service": "mdi:message-arrow-left"
+    },
+    "get_sender_names": {
+      "service": "mdi:card-account-mail"
+    },
+    "request_sender_name": {
+      "service": "mdi:card-account-details-star"
+    },
+    "blacklist_add": {
+      "service": "mdi:phone-cancel"
+    },
+    "blacklist_remove": {
+      "service": "mdi:phone-check"
+    },
+    "create_short_url": {
+      "service": "mdi:link-plus"
+    },
+    "list_short_urls": {
+      "service": "mdi:link-variant"
+    },
+    "remove_short_url": {
+      "service": "mdi:link-off"
+    }
+  }
+}

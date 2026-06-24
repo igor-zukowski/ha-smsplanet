@@ -1,44 +1,257 @@
 send_sms:
-  target:
-    entity:
-      integration: smsplanet
-      domain: notify
+  fields:
+    message:
+      required: true
+      example: "Alarm został uzbrojony."
+      selector:
+        text:
+          multiline: true
+    recipients:
+      required: false
+      example: "+48600111222, +48600333444"
+      selector:
+        text:
+    advanced_options:
+      collapsed: true
+      fields:
+        sender_name:
+          required: false
+          example: "TEST"
+          selector:
+            text:
+        replace_polish_chars:
+          required: false
+          default: false
+          selector:
+            boolean:
+        transactional_channel:
+          required: false
+          default: false
+          selector:
+            boolean:
+        test_mode:
+          required: false
+          default: false
+          selector:
+            boolean:
+        campaign_name:
+          required: false
+          example: "Home Assistant"
+          selector:
+            text:
+        send_at:
+          required: false
+          example: "24-06-2026 12:00:00"
+          selector:
+            text:
+        company_id:
+          required: false
+          selector:
+            text:
+        personalization_1:
+          required: false
+          selector:
+            text:
+        personalization_2:
+          required: false
+          selector:
+            text:
+        personalization_3:
+          required: false
+          selector:
+            text:
+        personalization_4:
+          required: false
+          selector:
+            text:
+
+send_mms:
   fields:
     message:
       required: true
       selector:
         text:
           multiline: true
-    target:
-      required: false
+    subject:
+      required: true
       selector:
         text:
-    sender:
-      required: false
+    attachment:
+      required: true
+      example: "https://example.com/image.jpg"
       selector:
         text:
-    clear_polish:
+    recipients:
       required: false
-      selector:
-        boolean:
-    transactional:
-      required: false
-      selector:
-        boolean:
-    test:
-      required: false
-      selector:
-        boolean:
-    name:
-      required: false
+      example: "+48600111222, +48600333444"
       selector:
         text:
+    advanced_options:
+      collapsed: true
+      fields:
+        sender_name:
+          required: false
+          selector:
+            text:
+        replace_polish_chars:
+          required: false
+          default: false
+          selector:
+            boolean:
+        test_mode:
+          required: false
+          default: false
+          selector:
+            boolean:
+        send_at:
+          required: false
+          example: "24-06-2026 12:00:00"
+          selector:
+            text:
 
 count_sms_parts:
   fields:
     message:
       required: true
+      example: "Treść wiadomości SMS do sprawdzenia."
       selector:
         text:
           multiline: true
 
+cancel_message:
+  fields:
+    message_id:
+      required: true
+      selector:
+        text:
+
+generate_report:
+  fields:
+    from_date:
+      required: true
+      example: "01-06-2026 00:00:00"
+      selector:
+        text:
+    to_date:
+      required: true
+      example: "30-06-2026 23:59:59"
+      selector:
+        text:
+    detailed:
+      required: false
+      default: false
+      selector:
+        boolean:
+    response_type:
+      required: false
+      default: "json"
+      selector:
+        select:
+          options:
+            - "json"
+            - "csv"
+
+get_message_info:
+  fields:
+    message_ids:
+      required: true
+      example: "123456, 123457"
+      selector:
+        text:
+    response_type:
+      required: false
+      default: "json"
+      selector:
+        select:
+          options:
+            - "json"
+            - "csv"
+
+refresh_delivery_webhook: {}
+
+remove_delivery_webhook: {}
+
+list_webhooks: {}
+
+get_incoming_sms_webhook_url: {}
+
+get_sender_names:
+  fields:
+    product:
+      required: false
+      default: "SMS"
+      selector:
+        select:
+          options:
+            - "SMS"
+            - "2WAY"
+            - "MMS"
+
+request_sender_name:
+  fields:
+    sender_name:
+      required: true
+      example: "MOJA FIRMA"
+      selector:
+        text:
+
+blacklist_add:
+  fields:
+    phone_number:
+      required: true
+      example: "48600111222"
+      selector:
+        text:
+    valid_to:
+      required: false
+      example: "15-09-2026"
+      selector:
+        text:
+
+blacklist_remove:
+  fields:
+    phone_number:
+      required: true
+      example: "48600111222"
+      selector:
+        text:
+
+create_short_url:
+  fields:
+    long_url:
+      required: true
+      example: "https://example.com/very-long-url"
+      selector:
+        text:
+    custom_alias:
+      required: false
+      selector:
+        text:
+    save:
+      required: false
+      default: false
+      selector:
+        boolean:
+    domain:
+      required: false
+      default: "wejdz.do"
+      selector:
+        select:
+          options:
+            - "wejdz.do"
+            - "link.do"
+
+list_short_urls:
+  fields:
+    short_url:
+      required: false
+      selector:
+        text:
+
+remove_short_url:
+  fields:
+    aliases:
+      required: true
+      example: "abc123, https://link.do/abc123"
+      selector:
+        text:

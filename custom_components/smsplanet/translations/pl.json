@@ -4,15 +4,24 @@
     "step": {
       "user": {
         "title": "SMSPLANET",
+        "description": "Połącz Home Assistant z SMSPLANET przy użyciu tokena API z panelu klienta SMSPLANET.",
         "data": {
           "api_token": "Token API",
           "signature_key": "Klucz podpisu webhooka"
+        },
+        "data_description": {
+          "api_token": "Token używany do autoryzacji wywołań API. Utwórz go w panelu SMSPLANET w sekcji tokenów API.",
+          "signature_key": "Opcjonalny klucz używany do weryfikacji webhooków statusów doręczeń. Skonfigurujesz go w ustawieniach webhooków SMSPLANET."
         }
       },
       "reauth_confirm": {
         "title": "Ponowna autoryzacja SMSPLANET",
+        "description": "Wpisz prawidłowy token API SMSPLANET, aby przywrócić działanie integracji.",
         "data": {
           "api_token": "Token API"
+        },
+        "data_description": {
+          "api_token": "Token używany do autoryzacji wywołań API."
         }
       }
     },
@@ -29,6 +38,7 @@
     "step": {
       "init": {
         "title": "Opcje SMSPLANET",
+        "description": "Te ustawienia domyślne są używane przez encję notify oraz przez akcje wysyłki, gdy dane pole zostanie puste.",
         "data": {
           "default_sender": "Domyślny nadawca",
           "default_recipients": "Domyślni odbiorcy, oddzieleni przecinkami",
@@ -36,6 +46,14 @@
           "transactional": "Używaj kanału transakcyjnego",
           "test_mode": "Tryb testowy",
           "enable_delivery_webhook": "Włącz webhook statusów doręczeń"
+        },
+        "data_description": {
+          "default_sender": "Pole nadawcy używane wtedy, gdy akcja nie podaje własnej nazwy nadawcy.",
+          "default_recipients": "Numery telefonu używane przez notify.smsplanet oraz przez akcje wysyłki bez jawnie podanych odbiorców.",
+          "clear_polish": "Domyślne ustawienie zamiany polskich znaków na odpowiedniki ASCII.",
+          "transactional": "Domyślne ustawienie żądania kanału transakcyjnego SMSPLANET.",
+          "test_mode": "Domyślne ustawienie sprawdzania żądań SMS bez wysyłania prawdziwych wiadomości.",
+          "enable_delivery_webhook": "Po włączeniu Home Assistant odbiera statusy doręczeń z SMSPLANET i emituje zdarzenia."
         }
       }
     }
@@ -51,6 +69,154 @@
         "name": "SMS"
       }
     }
+  },
+  "services": {
+    "send_sms": {
+      "name": "Wyślij SMS",
+      "description": "Wysyła wiadomość SMS przez SMSPLANET. W typowym powiadomieniu wystarczy wpisać treść i odbiorców; opcje zaawansowane zwykle można zostawić bez zmian.",
+      "fields": {
+        "message": {
+          "name": "Treść wiadomości",
+          "description": "Wpisz dokładną treść, która ma trafić do odbiorcy. Dłuższa wiadomość może zostać podzielona przez SMSPLANET na kilka części SMS, co może wpływać na koszt."
+        },
+        "recipients": {
+          "name": "Odbiorcy",
+          "description": "Numer telefonu, na który ma trafić SMS. Możesz wpisać jeden numer albo kilka numerów po przecinku, np. +48600111222, +48600333444. Zostaw puste, aby użyć domyślnych odbiorców z opcji integracji."
+        },
+        "sender_name": {
+          "name": "Nazwa nadawcy",
+          "description": "Nazwa widoczna u odbiorcy jako nadawca SMS, np. TEST albo zaakceptowane pole nadawcy z SMSPLANET. Zostaw puste, aby użyć domyślnego nadawcy z opcji integracji."
+        },
+        "replace_polish_chars": {
+          "name": "Zastąp polskie znaki",
+          "description": "Zamienia znaki takie jak ą, ć, ł i ż na a, c, l i z. Może zmniejszyć liczbę części SMS, ale wiadomość straci polskie znaki."
+        },
+        "transactional_channel": {
+          "name": "Kanał transakcyjny",
+          "description": "Używaj tylko do jednorazowych, niemarketingowych wiadomości, np. kodów logowania lub alarmów. Kanał musi być włączony na koncie SMSPLANET."
+        },
+        "test_mode": {
+          "name": "Tryb testowy",
+          "description": "Sprawdza, czy SMSPLANET przyjąłby żądanie, ale nie wysyła prawdziwego SMS-a. Przydatne podczas testowania automatyzacji."
+        },
+        "campaign_name": {
+          "name": "Nazwa wysyłki",
+          "description": "Opcjonalna etykieta zapisywana w historii SMSPLANET. Użyj jej, aby później łatwo odnaleźć wysyłkę, np. Alarm Home Assistant."
+        }
+      },
+      "sections": {
+        "advanced_options": {
+          "name": "Opcje zaawansowane",
+          "description": "Dodatkowe ustawienia SMSPLANET. Większość automatyzacji nie wymaga tych pól."
+        }
+      }
+    },
+    "count_sms_parts": {
+      "name": "Policz części SMS",
+      "description": "Sprawdza przed wysłaniem, na ile części SMSPLANET podzieli treść wiadomości.",
+      "fields": {
+        "message": {
+          "name": "Treść wiadomości",
+          "description": "Wklej treść SMS-a, aby oszacować liczbę części. Ta akcja nie wysyła wiadomości."
+        }
+      }
+    },
+    "send_mms": {
+      "name": "Wyślij MMS",
+      "description": "Wysyła wiadomość MMS z tematem i jednym załącznikiem przez SMSPLANET.",
+      "fields": {
+        "message": {"name": "Treść wiadomości", "description": "Treść wiadomości MMS."},
+        "subject": {"name": "Temat", "description": "Temat MMS-a. SMSPLANET zaleca jego podanie, bo część telefonów może odrzucać MMS bez tematu."},
+        "attachment": {"name": "Załącznik", "description": "Pełny adres URL załącznika MMS albo treść Base64. Cały MMS musi mieścić się w limitach rozmiaru SMSPLANET."},
+        "recipients": {"name": "Odbiorcy", "description": "Numer telefonu albo kilka numerów po przecinku. Zostaw puste, aby użyć domyślnych odbiorców."},
+        "sender_name": {"name": "Numer nadawcy", "description": "Numer nadawcy MMS z SMSPLANET. Zostaw puste, aby użyć domyślnego nadawcy integracji."},
+        "replace_polish_chars": {"name": "Zastąp polskie znaki", "description": "Zastępuje polskie znaki odpowiednikami ASCII przed wysłaniem."},
+        "test_mode": {"name": "Tryb testowy", "description": "Sprawdza żądanie bez wysyłania prawdziwego MMS-a."},
+        "send_at": {"name": "Wyślij później", "description": "Opcjonalna data planowanej wysyłki, np. 24-06-2026 12:00:00."}
+      },
+      "sections": {"advanced_options": {"name": "Opcje zaawansowane", "description": "Dodatkowe ustawienia MMS."}}
+    },
+    "cancel_message": {
+      "name": "Anuluj zaplanowaną wysyłkę",
+      "description": "Anuluje zaplanowaną wiadomość SMS lub MMS po ID wysyłki. ID bufora zaczynające się od B- nie mogą być anulowane.",
+      "fields": {"message_id": {"name": "ID wysyłki", "description": "ID wysyłki zwrócone przez SMSPLANET po utworzeniu wiadomości."}}
+    },
+    "generate_report": {
+      "name": "Wygeneruj raport",
+      "description": "Generuje raport wysyłek SMSPLANET dla podanego zakresu dat.",
+      "fields": {
+        "from_date": {"name": "Data od", "description": "Początek zakresu w formacie SMSPLANET, np. 01-06-2026 00:00:00."},
+        "to_date": {"name": "Data do", "description": "Koniec zakresu w formacie SMSPLANET, np. 30-06-2026 23:59:59."},
+        "detailed": {"name": "Raport szczegółowy", "description": "Dołącza szczegóły doręczeń dla poszczególnych odbiorców, jeśli są dostępne."},
+        "response_type": {"name": "Format odpowiedzi", "description": "Format raportu żądany od SMSPLANET."}
+      }
+    },
+    "get_message_info": {
+      "name": "Pobierz informacje o wysyłce",
+      "description": "Pobiera szczegółowe informacje dla jednego lub wielu ID wysyłek SMSPLANET. SMSPLANET ogranicza ten endpoint do jednego wywołania na 3 minuty.",
+      "fields": {
+        "message_ids": {"name": "ID wysyłek", "description": "Jedno ID wysyłki albo kilka ID oddzielonych przecinkami."},
+        "response_type": {"name": "Format odpowiedzi", "description": "Format odpowiedzi żądany od SMSPLANET."}
+      }
+    },
+    "refresh_delivery_webhook": {
+      "name": "Odśwież webhook doręczeń",
+      "description": "Tworzy lub aktualizuje w SMSPLANET adres webhooka statusów doręczeń dla tej instancji Home Assistant."
+    },
+    "remove_delivery_webhook": {
+      "name": "Usuń webhook doręczeń",
+      "description": "Usuwa webhook statusów doręczeń z SMSPLANET."
+    },
+    "list_webhooks": {
+      "name": "Pokaż webhooki",
+      "description": "Pokazuje webhooki aktualnie skonfigurowane w SMSPLANET."
+    },
+    "get_incoming_sms_webhook_url": {
+      "name": "Pobierz URL webhooka SMS przychodzących",
+      "description": "Zwraca adres URL Home Assistant, który należy wkleić w ustawieniach przekierowania SMS przychodzących 2WAY w SMSPLANET."
+    },
+    "get_sender_names": {
+      "name": "Pobierz nazwy nadawcy",
+      "description": "Pokazuje zaakceptowane pola nadawcy dla SMS, 2WAY lub MMS.",
+      "fields": {"product": {"name": "Produkt", "description": "Produkt SMSPLANET do sprawdzenia."}}
+    },
+    "request_sender_name": {
+      "name": "Zgłoś nazwę nadawcy",
+      "description": "Zgłasza nowe pole nadawcy SMS w SMSPLANET.",
+      "fields": {"sender_name": {"name": "Nazwa nadawcy", "description": "Pole nadawcy do zgłoszenia. SMSPLANET dopuszcza maksymalnie 11 obsługiwanych znaków."}}
+    },
+    "blacklist_add": {
+      "name": "Dodaj do czarnej listy",
+      "description": "Dodaje numer telefonu do czarnej listy SMSPLANET.",
+      "fields": {
+        "phone_number": {"name": "Numer telefonu", "description": "Numer telefonu do zablokowania."},
+        "valid_to": {"name": "Ważne do", "description": "Opcjonalna data ważności wpisu w formacie dd-mm-yyyy."}
+      }
+    },
+    "blacklist_remove": {
+      "name": "Usuń z czarnej listy",
+      "description": "Usuwa numer telefonu z czarnej listy SMSPLANET.",
+      "fields": {"phone_number": {"name": "Numer telefonu", "description": "Numer telefonu do odblokowania."}}
+    },
+    "create_short_url": {
+      "name": "Utwórz krótki link",
+      "description": "Tworzy krótki link przez skracacz SMSPLANET.",
+      "fields": {
+        "long_url": {"name": "Długi URL", "description": "Pełny adres URL do skrócenia."},
+        "custom_alias": {"name": "Własny alias", "description": "Opcjonalny proponowany alias. SMSPLANET użyje go tylko, jeśli jest wolny."},
+        "save": {"name": "Zapisz w SMSPLANET", "description": "Zapisuje krótki link w panelu SMSPLANET."},
+        "domain": {"name": "Domena krótkiego linku", "description": "Domena użyta do wygenerowania krótkiego linku."}
+      }
+    },
+    "list_short_urls": {
+      "name": "Pokaż krótkie linki",
+      "description": "Pokazuje zapisane krótkie linki SMSPLANET, opcjonalnie przefiltrowane po konkretnym linku.",
+      "fields": {"short_url": {"name": "Krótki URL", "description": "Opcjonalny krótki URL do filtrowania."}}
+    },
+    "remove_short_url": {
+      "name": "Usuń krótki link",
+      "description": "Usuwa jeden lub więcej krótkich linków z SMSPLANET.",
+      "fields": {"aliases": {"name": "Aliasy lub URL-e", "description": "Jeden alias lub krótki URL albo kilka wartości oddzielonych przecinkami."}}
+    }
   }
 }
-

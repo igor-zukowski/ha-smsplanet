@@ -4,4 +4,10 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .venv/
+.DS_Store
+git-priv
+git-priv.pub
+id_ed25519
+id_ed25519.pub
+slurps/
 

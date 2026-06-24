@@ -1,13 +1,13 @@
 {
   "domain": "smsplanet",
   "name": "SMSPLANET",
-  "codeowners": ["@igorzukowski"],
+  "codeowners": ["@igor-zukowski"],
   "config_flow": true,
   "dependencies": ["http", "webhook"],
-  "documentation": "https://github.com/igorzukowski/smsplanet",
+  "documentation": "https://github.com/igor-zukowski/ha-smsplanet",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/igorzukowski/smsplanet/issues",
+  "issue_tracker": "https://github.com/igor-zukowski/ha-smsplanet/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

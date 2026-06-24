@@ -19,6 +19,18 @@ class SendSmsResponse:
 
 
 @dataclass(frozen=True, slots=True)
+class SendMmsResponse:
+    """Response returned after sending an MMS."""
+
+    message_id: str
+
+    @property
+    def buffered(self) -> bool:
+        """Return whether the message was accepted into SMSPLANET queue buffer."""
+        return self.message_id.startswith("B-")
+
+
+@dataclass(frozen=True, slots=True)
 class BalanceResponse:
     """PrePaid account balance response."""
 
@@ -39,3 +51,13 @@ class DeliveryNotification:
     delivery_error: str | None
     raw: dict[str, Any]
 
+
+@dataclass(frozen=True, slots=True)
+class ShortUrlInfo:
+    """Short URL information returned by SMSPLANET."""
+
+    date: str | None
+    short_url: str
+    long_url: str | None
+    clicks: int | None
+    raw: dict[str, Any]

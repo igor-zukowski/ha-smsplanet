@@ -4,4 +4,3 @@
   "domains": ["notify", "sensor"],
   "homeassistant": "2025.6.0"
 }
-
