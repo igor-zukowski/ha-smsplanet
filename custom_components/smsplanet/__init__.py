@@ -57,6 +57,8 @@ from .webhook import (
 
 _LOGGER = logging.getLogger(__name__)
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 ATTR_CAMPAIGN_NAME = "campaign_name"
 ATTR_LEGACY_CLEAR_POLISH = "clear_polish"
 ATTR_LEGACY_NAME = "name"

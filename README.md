@@ -1,11 +1,21 @@
 # SMSPLANET for Home Assistant
 
+[![GitHub stars](https://img.shields.io/github/stars/igor-zukowski/ha-smsplanet?style=social)](https://github.com/igor-zukowski/ha-smsplanet/stargazers)
+[![GitHub release](https://img.shields.io/github/v/release/igor-zukowski/ha-smsplanet)](https://github.com/igor-zukowski/ha-smsplanet/releases)
+[![HACS validation](https://github.com/igor-zukowski/ha-smsplanet/actions/workflows/validate.yml/badge.svg)](https://github.com/igor-zukowski/ha-smsplanet/actions/workflows/validate.yml)
+[![Hassfest](https://github.com/igor-zukowski/ha-smsplanet/actions/workflows/hassfest.yml/badge.svg)](https://github.com/igor-zukowski/ha-smsplanet/actions/workflows/hassfest.yml)
+
 Home Assistant custom integration for sending SMS and MMS messages through
 [SMSPLANET](https://smsplanet.pl/) API v2.
 
-Author: Igor Żukowski <zukowski.igor3@gmail.com>
+Created and maintained by [Igor Zukowski](https://github.com/igor-zukowski).
 
-Repository: https://github.com/igor-zukowski/ha-smsplanet
+If this integration is useful for your Home Assistant setup, please consider
+[starring the repository](https://github.com/igor-zukowski/ha-smsplanet) or supporting ongoing development.
+
+<a href="https://buymeacoffee.com/igorzukowski" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="180">
+</a>
 
 ## Features
 
