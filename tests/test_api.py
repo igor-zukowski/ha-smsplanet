@@ -33,10 +33,21 @@ if "aiohttp" not in sys.modules:
     sys.modules["aiohttp"] = aiohttp
 
 if "async_timeout" not in sys.modules:
-    import asyncio
-
     async_timeout = types.ModuleType("async_timeout")
-    async_timeout.timeout = asyncio.timeout
+
+    class timeout:
+        """async_timeout.timeout test stub."""
+
+        def __init__(self, delay: int) -> None:
+            self.delay = delay
+
+        async def __aenter__(self) -> None:
+            return None
+
+        async def __aexit__(self, exc_type: object, exc: object, tb: object) -> None:
+            return None
+
+    async_timeout.timeout = timeout
     sys.modules["async_timeout"] = async_timeout
 
 SMSPLANET_PATH = Path(__file__).parents[1] / "custom_components" / "smsplanet"

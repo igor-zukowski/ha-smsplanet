@@ -102,6 +102,30 @@
         "campaign_name": {
           "name": "Nazwa wysyłki",
           "description": "Opcjonalna etykieta zapisywana w historii SMSPLANET. Użyj jej, aby później łatwo odnaleźć wysyłkę, np. Alarm Home Assistant."
+        },
+        "send_at": {
+          "name": "Wyślij później",
+          "description": "Opcjonalna data zaplanowanej wysyłki. SMSPLANET przyjmuje Unix time albo format dd-MM-yyyy HH:mm:ss, np. 24-06-2026 12:00:00. Wysyłki są planowane według polskiej strefy czasowej."
+        },
+        "company_id": {
+          "name": "ID firmy",
+          "description": "Opcjonalny identyfikator firmy SMSPLANET używany w scenariuszach poleceń lub rozliczeń."
+        },
+        "personalization_1": {
+          "name": "Parametr personalizacji 1",
+          "description": "Opcjonalne wartości dla znacznika [%parametr1%]. Przy personalizacji wielu odbiorców podaj wartości oddzielone znakiem pipe."
+        },
+        "personalization_2": {
+          "name": "Parametr personalizacji 2",
+          "description": "Opcjonalne wartości dla znacznika [%parametr2%]. Podaj tyle wartości oddzielonych znakiem pipe, ilu jest odbiorców."
+        },
+        "personalization_3": {
+          "name": "Parametr personalizacji 3",
+          "description": "Opcjonalne wartości dla znacznika [%parametr3%]. SMSPLANET obsługuje maksymalnie cztery parametry personalizacji."
+        },
+        "personalization_4": {
+          "name": "Parametr personalizacji 4",
+          "description": "Opcjonalne wartości dla znacznika [%parametr4%]. Zostaw puste, jeśli wiadomość nie używa tego znacznika."
         }
       },
       "sections": {

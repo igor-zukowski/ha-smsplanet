@@ -102,6 +102,30 @@
         "campaign_name": {
           "name": "Campaign name",
           "description": "Optional label saved in SMSPLANET history. Use it to identify messages later, for example Home Assistant alarm."
+        },
+        "send_at": {
+          "name": "Send later",
+          "description": "Optional scheduled send date. SMSPLANET accepts Unix time or dd-MM-yyyy HH:mm:ss, for example 24-06-2026 12:00:00. Scheduled sends use the Polish time zone."
+        },
+        "company_id": {
+          "name": "Company ID",
+          "description": "Optional SMSPLANET company identifier used for referral or accounting scenarios."
+        },
+        "personalization_1": {
+          "name": "Personalization parameter 1",
+          "description": "Optional values for the [%parametr1%] placeholder. Use pipe-separated values when sending personalized messages to multiple recipients."
+        },
+        "personalization_2": {
+          "name": "Personalization parameter 2",
+          "description": "Optional values for the [%parametr2%] placeholder. Use the same number of pipe-separated values as recipients."
+        },
+        "personalization_3": {
+          "name": "Personalization parameter 3",
+          "description": "Optional values for the [%parametr3%] placeholder. SMSPLANET supports up to four personalization parameters."
+        },
+        "personalization_4": {
+          "name": "Personalization parameter 4",
+          "description": "Optional values for the [%parametr4%] placeholder. Leave empty when the message does not use this placeholder."
         }
       },
       "sections": {

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class SendSmsResponse:
     """Response returned after sending an SMS."""
 
@@ -18,7 +18,7 @@ class SendSmsResponse:
         return self.message_id.startswith("B-")
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class SendMmsResponse:
     """Response returned after sending an MMS."""
 
@@ -30,14 +30,14 @@ class SendMmsResponse:
         return self.message_id.startswith("B-")
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class BalanceResponse:
     """PrePaid account balance response."""
 
     balance: int
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class DeliveryNotification:
     """Delivery notification sent by SMSPLANET webhook."""
 
@@ -52,7 +52,7 @@ class DeliveryNotification:
     raw: dict[str, Any]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ShortUrlInfo:
     """Short URL information returned by SMSPLANET."""
 

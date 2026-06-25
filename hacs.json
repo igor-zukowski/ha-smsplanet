@@ -1,6 +1,5 @@
 {
   "name": "SMSPLANET",
-  "render_readme": true,
-  "domains": ["notify", "sensor"],
+  "country": "PL",
   "homeassistant": "2025.6.0"
 }
