@@ -113,19 +113,19 @@
         },
         "personalization_1": {
           "name": "Personalization parameter 1",
-          "description": "Optional values for the [%parametr1%] placeholder."
+          "description": "Optional values for the first personalization parameter."
         },
         "personalization_2": {
           "name": "Personalization parameter 2",
-          "description": "Optional values for the [%parametr2%] placeholder."
+          "description": "Optional values for the second personalization parameter."
         },
         "personalization_3": {
           "name": "Personalization parameter 3",
-          "description": "Optional values for the [%parametr3%] placeholder."
+          "description": "Optional values for the third personalization parameter."
         },
         "personalization_4": {
           "name": "Personalization parameter 4",
-          "description": "Optional values for the [%parametr4%] placeholder."
+          "description": "Optional values for the fourth personalization parameter."
         }
       },
       "sections": {

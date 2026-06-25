@@ -113,19 +113,19 @@
         },
         "personalization_1": {
           "name": "Parametr personalizacji 1",
-          "description": "Opcjonalne wartości dla znacznika [%parametr1%]."
+          "description": "Opcjonalne wartości dla pierwszego parametru personalizacji."
         },
         "personalization_2": {
           "name": "Parametr personalizacji 2",
-          "description": "Opcjonalne wartości dla znacznika [%parametr2%]."
+          "description": "Opcjonalne wartości dla drugiego parametru personalizacji."
         },
         "personalization_3": {
           "name": "Parametr personalizacji 3",
-          "description": "Opcjonalne wartości dla znacznika [%parametr3%]."
+          "description": "Opcjonalne wartości dla trzeciego parametru personalizacji."
         },
         "personalization_4": {
           "name": "Parametr personalizacji 4",
-          "description": "Opcjonalne wartości dla znacznika [%parametr4%]."
+          "description": "Opcjonalne wartości dla czwartego parametru personalizacji."
         }
       },
       "sections": {
